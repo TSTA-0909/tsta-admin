@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>通知送信（管理者）</title>
+</head>
+<body>
+  <h2>🔔 ユーザーへ通知を送る</h2>
+
+  <label>通知タイトル：<input type="text" id="title" style="width: 100%;"></label><br>
+  <label>通知本文：<input type="text" id="body" style="width: 100%;"></label><br><br>
+  <button onclick="sendToAll()">全ユーザーに通知</button>
+
+  <p id="status"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
+    import {
+      getFirestore, collection, getDocs
+    } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3pcdWqFwrvokCUyGGJlg_ruQ-6wUSZT8",
+      authDomain: "tsta-reserve.firebaseapp.com",
+      projectId: "tsta-reserve",
+      storageBucket: "tsta-reserve.appspot.com",
+      messagingSenderId: "242251329752",
+      appId: "1:242251329752:web:f70718703ba8e35298a7ad"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const serverKey = "★★★ここにサーバーキーを貼る★★★"; // 公開しないで！
+
+    async function sendToAll() {
+      const title = document.getElementById("title").value.trim();
+      const body = document.getElementById("body").value.trim();
+      const status = document.getElementById("status");
+
+      if (!title || !body) {
+        status.textContent = "タイトルと本文を入力してください";
+        return;
+      }
+
+      const snap = await getDocs(collection(db, "tokens"));
+      let success = 0, fail = 0;
+
+      for (const doc of snap.docs) {
+        const token = doc.data().token;
+        const payload = {
+          notification: { title, body },
+          to: token
+        };
+
+        const res = await fetch("https://fcm.googleapis.com/fcm/send", {
+          method: "POST",
+          headers: {
+            "Authorization": "key=" + serverKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        if (json.success === 1 || json.message_id) success++;
+        else fail++;
+      }
+
+      status.textContent = `✅ 成功: ${success}件／❌ 失敗: ${fail}件`;
+    }
+  </script>
+</body>
+</html>
