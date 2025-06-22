@@ -4,47 +4,41 @@
   <meta charset="UTF-8" />
   <title>管理者：予約日設定</title>
   <style>
-/* -- ここは今までのまま -- */
-body {
-  font-family: sans-serif;
-  padding: 20px;
-  background: #f0f0f0;
-  margin: 0;
-}
-.calendar-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
-table { border-collapse: collapse; margin-bottom: 10px; }
-th, td { width: 36px; height: 36px; border: 1px solid #ccc; text-align: center; cursor: pointer; font-size: 14px; }
-td.today { background: #ffe4b2; }
-td.selected { background: #add8e6; transform: scale(1.2); font-weight: bold; }
-td.available { background: #c0ffc0; }
-td.disabled { background: #eee; color: #aaa; cursor: default; }
-.section { margin-top: 20px; background: white; padding: 10px; border-radius: 6px; max-width: 100%; width: 100%; box-sizing: border-box; }
-.name-list div, .comment-box { padding: 6px 0; }
-.name-list button, .comment-box button { margin-top: 4px; font-size: 14px; }
-.comment-box textarea { width: 100%; font-size: 14px; padding: 6px; box-sizing: border-box; }
-.user-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #ccc; }
-.user-item:hover { background: #eee; }
-.chat-message { margin: 6px 0; font-size: 14px; }
-.chat-message.admin { text-align: right; }
-.chat-message .sender { font-weight: bold; }
-.chat-message .text { display: inline-block; margin-left: 6px; }
-.badge { background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
-@media screen and (max-width: 600px) {
-  th, td { width: 30px; height: 30px; font-size: 12px; }
-  .calendar-container { flex-direction: column; }
-  .section { padding: 10px; font-size: 14px; }
-  textarea, input, button { font-size: 16px; width: 100%; box-sizing: border-box; }
-  button { margin-top: 8px; }
-  .name-list div { font-size: 15px; }
-}
+    body { font-family: sans-serif; padding: 20px; background: #f0f0f0; margin: 0; }
+    .calendar-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+    table { border-collapse: collapse; margin-bottom: 10px; }
+    th, td { width: 36px; height: 36px; border: 1px solid #ccc; text-align: center; cursor: pointer; font-size: 14px; }
+    td.today { background: #ffe4b2; }
+    td.selected { background: #add8e6; transform: scale(1.2); font-weight: bold; }
+    td.available { background: #c0ffc0; }
+    td.disabled { background: #eee; color: #aaa; cursor: default; }
+    .section { margin-top: 20px; background: white; padding: 10px; border-radius: 6px; max-width: 100%; width: 100%; box-sizing: border-box; }
+    .name-list div, .comment-box { padding: 6px 0; }
+    .name-list button, .comment-box button { margin-top: 4px; font-size: 14px; }
+    .comment-box textarea { width: 100%; font-size: 14px; padding: 6px; box-sizing: border-box; }
+    .user-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #ccc; }
+    .user-item:hover { background: #eee; }
+    .chat-message { margin: 6px 0; font-size: 14px; }
+    .chat-message.admin { text-align: right; }
+    .chat-message .sender { font-weight: bold; }
+    .chat-message .text { display: inline-block; margin-left: 6px; }
+    .badge { background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
+    @media screen and (max-width: 600px) {
+      th, td { width: 30px; height: 30px; font-size: 12px; }
+      .calendar-container { flex-direction: column; }
+      .section { padding: 10px; font-size: 14px; }
+      textarea, input, button { font-size: 16px; width: 100%; box-sizing: border-box; }
+      button { margin-top: 8px; }
+      .name-list div { font-size: 15px; }
+    }
   </style>
 </head>
-
 <body>
   <h1>管理者：予約日設定</h1>
   <div id="uidDisplay" style="font-size:14px; color:#007acc; margin-bottom:8px;"></div>
-  <!-- ...（ここから下は既存の画面要素）... -->
+
   <div class="calendar-container" id="calendarArea"></div>
+
   <div class="section">
     <h3>選択日：<span id="selectedDateDisplay">未選択</span></h3>
     <label>初心者上限：<input type="number" id="beginner" value="2"></label><br>
@@ -52,18 +46,24 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
     <button id="saveBtn">予約可能にする</button>
     <p id="status"></p>
   </div>
+
   <div class="section">
     <h3>📢 お知らせ管理</h3>
     <textarea id="noticeInput" rows="3" style="width: 100%;"></textarea><br>
     <button id="saveNoticeBtn">お知らせを保存</button>
     <p id="noticeStatus"></p>
   </div>
-  <h3>🔔 プッシュ通知を全ユーザーに送信</h3>
+
+  <!-- ▼ プッシュ通知送信用フォーム -->
+  <div class="section">
+    <h3>🔔 プッシュ通知を全ユーザーに送信</h3>
     <label>通知タイトル：<input type="text" id="pushTitle" style="width:100%"></label><br>
     <label>通知本文：<input type="text" id="pushBody" style="width:100%"></label><br>
     <button id="pushSendBtn">全ユーザーに通知送信</button>
     <p id="pushStatus"></p>
   </div>
+  <!-- ▲ プッシュ通知送信用フォーム -->
+
   <div class="section" id="reservationInfo" style="display:none;">
     <h3>🔎 参加者一覧（選択日）</h3>
     <div id="beginnerList" class="name-list"></div>
@@ -100,7 +100,8 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth();
-    const NOTIFY_API_URL = "http://localhost:3001/notify"; // ← Node.jsサーバのURLに変更
+    // ※APIサーバーがlocalhost以外の場合はここを書き換える
+    const NOTIFY_API_URL = "http://localhost:3001/notify";
 
     let selectedDate = null;
     let configMap = {};
@@ -200,34 +201,7 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
       document.getElementById("experiencedList").innerHTML =
         `<h4>経験者（${experienced.length}人）</h4>` +
         experienced.map(p => `<div>${p.name}（${p.count}回） <button onclick="cancel('${p.id}')">キャンセル</button></div>`).join("");
-      document.getElementById("pushSendBtn").addEventListener("click", async () => {
-      const title = document.getElementById("pushTitle").value.trim();
-      const body = document.getElementById("pushBody").value.trim();
-      const status = document.getElementById("pushStatus");
-
-      if (!title || !body) {
-        status.textContent = "タイトルと本文を入力してください";
-        return;
-      }
-      status.textContent = "通知送信中…";
-      try {
-        const res = await fetch(NOTIFY_API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, body })
-        });
-        const json = await res.json();
-        if (json.success) {
-          status.textContent = `✅ 通知送信完了（${json.count}件）`;
-        } else {
-          status.textContent = "❌ 通知失敗：" + (json.error || "不明なエラー");
-        }
-      } catch (e) {
-        status.textContent = "❌ 通信エラー：" + e.message;
-      }
-    });
-
-      }
+    }
 
     window.cancel = async function(id) {
       if (!confirm("本当にキャンセルしますか？")) return;
@@ -323,9 +297,37 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
       document.getElementById("replyText").value = "";
     });
 
-    // ▼▼▼ ここから認証処理を加えた本番版 ▼▼▼
+    // ▼▼ ページロード時に一度だけ通知送信イベントを登録 ▼▼
+    document.getElementById("pushSendBtn").addEventListener("click", async () => {
+      const title = document.getElementById("pushTitle").value.trim();
+      const body = document.getElementById("pushBody").value.trim();
+      const status = document.getElementById("pushStatus");
+
+      if (!title || !body) {
+        status.textContent = "タイトルと本文を入力してください";
+        return;
+      }
+      status.textContent = "通知送信中…";
+      try {
+        const res = await fetch(NOTIFY_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, body })
+        });
+        const json = await res.json();
+        if (json.success) {
+          status.textContent = `✅ 通知送信完了（${json.count}件）`;
+        } else {
+          status.textContent = "❌ 通知失敗：" + (json.error || "不明なエラー");
+        }
+      } catch (e) {
+        status.textContent = "❌ 通信エラー：" + e.message;
+      }
+    });
+    // ▲▲ ページロード時に一度だけ通知送信イベントを登録 ▲▲
+
+    // ▼▼ 認証＆初期化 ▼▼
     signInAnonymously(auth).then(() => {
-      // 認証後のUIDを表示してadmins登録も確認しやすく
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           document.getElementById("uidDisplay").textContent = "管理者UID: " + user.uid;
@@ -346,7 +348,7 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
         }
       });
     });
-    // ▲▲▲ ここまで追加 ▲▲▲
+    // ▲▲ 認証＆初期化 ▲▲
 
   </script>
 </body>
