@@ -40,7 +40,10 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
   </style>
 </head>
 <body>
+<body>
   <h1>管理者：予約日設定</h1>
+  <div id="uidDisplay" style="font-size:14px; color:#007acc; margin-bottom:8px;"></div>
+  <!-- ...（ここから下は既存の画面要素）... -->
   <div class="calendar-container" id="calendarArea"></div>
   <div class="section">
     <h3>選択日：<span id="selectedDateDisplay">未選択</span></h3>
@@ -291,7 +294,7 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
       // 認証後のUIDを表示してadmins登録も確認しやすく
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-          console.log("管理者UID:", user.uid);
+          document.getElementById("uidDisplay").textContent = "管理者UID: " + user.uid;
           await loadConfigFromFirestore();
           renderCalendar();
           document.getElementById("saveBtn").addEventListener("click", saveConfig);
