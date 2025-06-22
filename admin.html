@@ -4,154 +4,44 @@
   <meta charset="UTF-8" />
   <title>管理者：予約日設定</title>
   <style>
+/* -- ここは今までのまま -- */
 body {
   font-family: sans-serif;
   padding: 20px;
   background: #f0f0f0;
   margin: 0;
 }
-
-.calendar-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-}
-
-table {
-  border-collapse: collapse;
-  margin-bottom: 10px;
-}
-
-th, td {
-  width: 36px;
-  height: 36px;
-  border: 1px solid #ccc;
-  text-align: center;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-td.today {
-  background: #ffe4b2;
-}
-
-td.selected {
-  background: #add8e6;
-  transform: scale(1.2);
-  font-weight: bold;
-}
-
-td.available {
-  background: #c0ffc0;
-}
-
-td.disabled {
-  background: #eee;
-  color: #aaa;
-  cursor: default;
-}
-
-.section {
-  margin-top: 20px;
-  background: white;
-  padding: 10px;
-  border-radius: 6px;
-  max-width: 100%;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.name-list div, .comment-box {
-  padding: 6px 0;
-}
-
-.name-list button, .comment-box button {
-  margin-top: 4px;
-  font-size: 14px;
-}
-
-.comment-box textarea {
-  width: 100%;
-  font-size: 14px;
-  padding: 6px;
-  box-sizing: border-box;
-}
-
-.user-item {
-  padding: 8px;
-  cursor: pointer;
-  border-bottom: 1px solid #ccc;
-}
-
-.user-item:hover {
-  background: #eee;
-}
-
-.chat-message {
-  margin: 6px 0;
-  font-size: 14px;
-}
-
-.chat-message.admin {
-  text-align: right;
-}
-
-.chat-message .sender {
-  font-weight: bold;
-}
-
-.chat-message .text {
-  display: inline-block;
-  margin-left: 6px;
-}
-
-.badge {
-  background: red;
-  color: white;
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  margin-left: 4px;
-}
-
-/* スマホ用レイアウト調整 */
+.calendar-container { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+table { border-collapse: collapse; margin-bottom: 10px; }
+th, td { width: 36px; height: 36px; border: 1px solid #ccc; text-align: center; cursor: pointer; font-size: 14px; }
+td.today { background: #ffe4b2; }
+td.selected { background: #add8e6; transform: scale(1.2); font-weight: bold; }
+td.available { background: #c0ffc0; }
+td.disabled { background: #eee; color: #aaa; cursor: default; }
+.section { margin-top: 20px; background: white; padding: 10px; border-radius: 6px; max-width: 100%; width: 100%; box-sizing: border-box; }
+.name-list div, .comment-box { padding: 6px 0; }
+.name-list button, .comment-box button { margin-top: 4px; font-size: 14px; }
+.comment-box textarea { width: 100%; font-size: 14px; padding: 6px; box-sizing: border-box; }
+.user-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #ccc; }
+.user-item:hover { background: #eee; }
+.chat-message { margin: 6px 0; font-size: 14px; }
+.chat-message.admin { text-align: right; }
+.chat-message .sender { font-weight: bold; }
+.chat-message .text { display: inline-block; margin-left: 6px; }
+.badge { background: red; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 4px; }
 @media screen and (max-width: 600px) {
-  th, td {
-    width: 30px;
-    height: 30px;
-    font-size: 12px;
-  }
-
-  .calendar-container {
-    flex-direction: column;
-  }
-
-  .section {
-    padding: 10px;
-    font-size: 14px;
-  }
-
-  textarea, input, button {
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  button {
-    margin-top: 8px;
-  }
-
-  .name-list div {
-    font-size: 15px;
-  }
+  th, td { width: 30px; height: 30px; font-size: 12px; }
+  .calendar-container { flex-direction: column; }
+  .section { padding: 10px; font-size: 14px; }
+  textarea, input, button { font-size: 16px; width: 100%; box-sizing: border-box; }
+  button { margin-top: 8px; }
+  .name-list div { font-size: 15px; }
 }
   </style>
 </head>
 <body>
   <h1>管理者：予約日設定</h1>
   <div class="calendar-container" id="calendarArea"></div>
-
   <div class="section">
     <h3>選択日：<span id="selectedDateDisplay">未選択</span></h3>
     <label>初心者上限：<input type="number" id="beginner" value="2"></label><br>
@@ -159,20 +49,17 @@ td.disabled {
     <button id="saveBtn">予約可能にする</button>
     <p id="status"></p>
   </div>
-
   <div class="section">
     <h3>📢 お知らせ管理</h3>
     <textarea id="noticeInput" rows="3" style="width: 100%;"></textarea><br>
     <button id="saveNoticeBtn">お知らせを保存</button>
     <p id="noticeStatus"></p>
   </div>
-
   <div class="section" id="reservationInfo" style="display:none;">
     <h3>🔎 参加者一覧（選択日）</h3>
     <div id="beginnerList" class="name-list"></div>
     <div id="experiencedList" class="name-list"></div>
   </div>
-
   <div class="section" id="commentSection">
     <h3>💬 コメントやり取り</h3>
     <div id="userList"></div>
@@ -182,12 +69,15 @@ td.disabled {
     <button id="sendReply">返信する</button>
   </div>
 
-    <script type="module">
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
     import {
       getFirestore, doc, setDoc, getDocs, getDoc, addDoc, collection,
       deleteDoc, query, where, onSnapshot, serverTimestamp, orderBy
     } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+    import {
+      getAuth, signInAnonymously, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC3pcdWqFwrvokCUyGGJlg_ruQ-6wUSZT8",
@@ -200,6 +90,8 @@ td.disabled {
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth();
+
     let selectedDate = null;
     let configMap = {};
     let selectedUID = null;
@@ -212,6 +104,7 @@ td.disabled {
 
     async function loadConfigFromFirestore() {
       const snap = await getDocs(collection(db, "config"));
+      configMap = {};
       snap.forEach(doc => configMap[doc.id] = doc.data());
     }
 
@@ -317,6 +210,7 @@ td.disabled {
         document.getElementById("status").textContent = "設定を保存しました";
       } catch (e) {
         console.error("保存失敗:", e);
+        document.getElementById("status").textContent = "保存失敗: " + (e.message || e);
       }
     }
 
@@ -327,6 +221,7 @@ td.disabled {
         document.getElementById("noticeStatus").textContent = "保存しました";
       } catch (e) {
         console.error("お知らせ保存エラー:", e);
+        document.getElementById("noticeStatus").textContent = "保存失敗: " + (e.message || e);
       }
     }
 
@@ -391,22 +286,31 @@ td.disabled {
       document.getElementById("replyText").value = "";
     });
 
-    window.onload = async () => {
-      await loadConfigFromFirestore();
-      renderCalendar();
-      document.getElementById("saveBtn").addEventListener("click", saveConfig);
-      document.getElementById("saveNoticeBtn").addEventListener("click", saveNotice);
-      setupCommentListener();
+    // ▼▼▼ ここから認証処理を加えた本番版 ▼▼▼
+    signInAnonymously(auth).then(() => {
+      // 認証後のUIDを表示してadmins登録も確認しやすく
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          console.log("管理者UID:", user.uid);
+          await loadConfigFromFirestore();
+          renderCalendar();
+          document.getElementById("saveBtn").addEventListener("click", saveConfig);
+          document.getElementById("saveNoticeBtn").addEventListener("click", saveNotice);
+          setupCommentListener();
 
-      try {
-        const docSnap = await getDoc(doc(db, "config", "notice"));
-        if (docSnap.exists()) {
-          document.getElementById("noticeInput").value = docSnap.data().text || "";
+          try {
+            const docSnap = await getDoc(doc(db, "config", "notice"));
+            if (docSnap.exists()) {
+              document.getElementById("noticeInput").value = docSnap.data().text || "";
+            }
+          } catch (e) {
+            console.error("お知らせ読み込み失敗:", e);
+          }
         }
-      } catch (e) {
-        console.error("お知らせ読み込み失敗:", e);
-      }
-    };
+      });
+    });
+    // ▲▲▲ ここまで追加 ▲▲▲
+
   </script>
 </body>
 </html>
