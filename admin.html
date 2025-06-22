@@ -39,7 +39,7 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
 }
   </style>
 </head>
-<body>
+
 <body>
   <h1>管理者：予約日設定</h1>
   <div id="uidDisplay" style="font-size:14px; color:#007acc; margin-bottom:8px;"></div>
@@ -57,6 +57,12 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
     <textarea id="noticeInput" rows="3" style="width: 100%;"></textarea><br>
     <button id="saveNoticeBtn">お知らせを保存</button>
     <p id="noticeStatus"></p>
+  </div>
+  <h3>🔔 プッシュ通知を全ユーザーに送信</h3>
+    <label>通知タイトル：<input type="text" id="pushTitle" style="width:100%"></label><br>
+    <label>通知本文：<input type="text" id="pushBody" style="width:100%"></label><br>
+    <button id="pushSendBtn">全ユーザーに通知送信</button>
+    <p id="pushStatus"></p>
   </div>
   <div class="section" id="reservationInfo" style="display:none;">
     <h3>🔎 参加者一覧（選択日）</h3>
@@ -94,6 +100,7 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth();
+    const NOTIFY_API_URL = "http://localhost:3001/notify"; // ← Node.jsサーバのURLに変更
 
     let selectedDate = null;
     let configMap = {};
@@ -193,7 +200,34 @@ td.disabled { background: #eee; color: #aaa; cursor: default; }
       document.getElementById("experiencedList").innerHTML =
         `<h4>経験者（${experienced.length}人）</h4>` +
         experienced.map(p => `<div>${p.name}（${p.count}回） <button onclick="cancel('${p.id}')">キャンセル</button></div>`).join("");
-    }
+      document.getElementById("pushSendBtn").addEventListener("click", async () => {
+      const title = document.getElementById("pushTitle").value.trim();
+      const body = document.getElementById("pushBody").value.trim();
+      const status = document.getElementById("pushStatus");
+
+      if (!title || !body) {
+        status.textContent = "タイトルと本文を入力してください";
+        return;
+      }
+      status.textContent = "通知送信中…";
+      try {
+        const res = await fetch(NOTIFY_API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, body })
+        });
+        const json = await res.json();
+        if (json.success) {
+          status.textContent = `✅ 通知送信完了（${json.count}件）`;
+        } else {
+          status.textContent = "❌ 通知失敗：" + (json.error || "不明なエラー");
+        }
+      } catch (e) {
+        status.textContent = "❌ 通信エラー：" + e.message;
+      }
+    });
+
+      }
 
     window.cancel = async function(id) {
       if (!confirm("本当にキャンセルしますか？")) return;
